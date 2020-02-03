@@ -5,7 +5,7 @@ const MnemonicWalletSubprovider = require('@0x/subproviders').MnemonicWalletSubp
 const RPCSubprovider = require('web3-provider-engine/subproviders/rpc')
 const Web3ProviderEngine = require('web3-provider-engine')
 
-const MNEMONIC = process.env.MNEMONIC
+const PRIVATE_KEY = process.env.PRIVATE_KEY
 const INFURA_KEY = process.env.INFURA_KEY
 const FACTORY_CONTRACT_ADDRESS = process.env.FACTORY_CONTRACT_ADDRESS
 const OWNER_ADDRESS = process.env.OWNER_ADDRESS
@@ -22,8 +22,8 @@ const FIXED_PRICE_OPTION_IDS = ["3", "4", "5", "6"];
 const NUM_FIXED_PRICE_AUCTIONS = 10;
 const FIXED_PRICE = .05;
 
-if (!MNEMONIC || !INFURA_KEY || !NETWORK || !OWNER_ADDRESS) {
-    console.error("Please set a mnemonic, infura key, owner, network, API key, nft contract, and factory contract address.")
+if (!PRIVATE_KEY || !INFURA_KEY || !NETWORK || !OWNER_ADDRESS) {
+    console.error("Please set a private key, infura key, owner, network, API key, nft contract, and factory contract address.")
     return
 }
 
@@ -34,13 +34,13 @@ if (!FACTORY_CONTRACT_ADDRESS) {
 
 const BASE_DERIVATION_PATH = `44'/60'/0'/0`
 
-const mnemonicWalletSubprovider = new MnemonicWalletSubprovider({ mnemonic: MNEMONIC, baseDerivationPath: BASE_DERIVATION_PATH})
+const MnemonicWalletSubprovider = new MnemonicWalletSubprovider({ PRIVATE_KEY: PRIVATE_KEY, baseDerivationPath: BASE_DERIVATION_PATH})
 const infuraRpcSubprovider = new RPCSubprovider({
     rpcUrl: 'https://' + NETWORK + '.infura.io/v3/' + INFURA_KEY,
 })
 
 const providerEngine = new Web3ProviderEngine()
-providerEngine.addProvider(mnemonicWalletSubprovider)
+providerEngine.addProvider(MnemonicWalletSubprovider)
 providerEngine.addProvider(infuraRpcSubprovider)
 providerEngine.start();
 

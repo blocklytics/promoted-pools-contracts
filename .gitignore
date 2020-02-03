@@ -3,3 +3,5 @@ flattened/
 node_modules/
 .env*
 *.DS_Store
+.npm-shrinkwrap.json
+npm-shrinkwrap.json
