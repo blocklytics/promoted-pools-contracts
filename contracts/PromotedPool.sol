@@ -126,12 +126,13 @@ contract PromotedPool is ERC721Full, ERC721Burnable, Ownable {
   }
 
   function baseTokenURI() public view returns (string memory) {
-    return "https://promoted-pools.herokuapp.com/";
+    return "https://nft.blocklytics.org/";
   }
 
   function tokenURI(uint256 _tokenId) external view returns (string memory) {
     return Strings.strConcat(
         baseTokenURI(),
+        "promoted-pools/",
         Strings.uint2str(_tokenId)
     );
   }
