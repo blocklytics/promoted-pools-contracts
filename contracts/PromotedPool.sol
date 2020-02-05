@@ -119,10 +119,9 @@ contract PromotedPool is ERC721Full, Ownable {
     */
   function setPromotedPool() public {
     require(currentTokenId > activeTokenId, "Mint new token first.");
-    if (now >= promotionPeriods[activeTokenId].endTime) {
-      ++activeTokenId;
-      emit ActiveTokenUpdated(activeTokenId);
-    }
+    require(now >= promotionPeriods[activeTokenId].endTime, "Current Promotion has not yet expired");
+    ++activeTokenId;
+    emit ActiveTokenUpdated(activeTokenId);
   }
 
   /**
