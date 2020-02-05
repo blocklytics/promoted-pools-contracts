@@ -61,7 +61,7 @@ const NFT_ABI = [{
 }, {
     "constant": true,
     "inputs": [],
-    "name": "totalSupply",
+    "name": "getCurrentTokenId",
     "outputs": [{
         "internalType": "uint256",
         "name": "",
@@ -132,10 +132,10 @@ async function main() {
         const nftContract = new web3Instance.eth.Contract(NFT_ABI, NFT_CONTRACT_ADDRESS, {
             gasLimit: "1000000"
         })
-        let totalSupply = await nftContract.methods.totalSupply().call({
+        let currentTokenIdResult = await nftContract.methods.getCurrentTokenId().call({
             from: OWNER_ADDRESS
         });
-        let currentTokenId = parseInt(totalSupply)
+        let currentTokenId = parseInt(currentTokenIdResult)
 
         // Promoted Pools issued directly to the owner.
         for (var i = 0; i < NUM_PROMOTED_POOLS; i++) {

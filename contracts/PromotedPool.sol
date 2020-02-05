@@ -51,6 +51,10 @@ contract PromotedPool is ERC721Full, ERC721Burnable, Ownable {
   /**
     * @dev Mints a token to an address with a tokenURI.
     * @param _to address of the future owner of the token
+    * @param _startTime timestamp when the pool promoted by this token holder will begin displaying
+    * @param _endTime timestamp when token expires
+    * @param _termsHash hash of the terms and conditions associated with this token
+    * @param _termsVersion version number of the terms and conditions
     */
   function mintTo(address _to, uint256 _startTime, uint256 _endTime, string memory _termsHash, uint8 _termsVersion) public onlyOwner {
     require(_startTime > now, "Token must have start time in the future.");
@@ -71,6 +75,9 @@ contract PromotedPool is ERC721Full, ERC721Burnable, Ownable {
     emit MintedToken(newTokenId, _to, _startTime, _endTime);
   }
 
+  /**
+    * @dev allows token holder to propose a pool to promote
+    */
   function proposePromotedPool(uint256 _tokenId, address _poolAddress) public {
     require(msg.sender == ownerOf(_tokenId), "You must be the owner of a valid token to propose a promoted pool");
     require(promotionPeriods[_tokenId].endTime > now, "Sorry, this token has expired");
@@ -78,6 +85,9 @@ contract PromotedPool is ERC721Full, ERC721Burnable, Ownable {
     emit PromotedPoolProposed(_poolAddress, _tokenId, promotionPeriods[_tokenId].startTime, promotionPeriods[_tokenId].endTime);
   }
 
+  /**
+    * @dev allows the owner to approve a proposed pool
+    */
   function approvePromotedPool(uint256 _tokenId, address _poolAddress) public onlyOwner {
     require(proposedPools[_tokenId].proposedPool == _poolAddress, "Pool address must match pool proposed by token holder");
     require(promotionPeriods[_tokenId].endTime > now, "This token has expired");
@@ -85,15 +95,25 @@ contract PromotedPool is ERC721Full, ERC721Burnable, Ownable {
     emit PromotedPoolApproved(_poolAddress, _tokenId, promotionPeriods[_tokenId].startTime, promotionPeriods[_tokenId].endTime);
   }
 
+  /**
+    * @dev resets the current promoted pool by setting the approvedPool address to 0
+    */
   function resetPromotedPool(uint256 _tokenId) public onlyOwner {
     proposedPools[_tokenId].approvedPool = address(0);
     emit PromotedPoolReset(_tokenId);
   }
 
+  /**
+    * @dev gets the current promoted pool
+    * @return address pool address
+    */
   function getPromotedPool() public view returns (address) {
     return proposedPools[_activeTokenId].approvedPool;
   }
 
+  /**
+    * @dev sets the promoted pool returned by getPromotedPool by incrementing _activeTokenId
+    */
   function setPromotedPool() public {
     require(_currentTokenId > _activeTokenId, "Mint new token first.");
     if (now >= promotionPeriods[_activeTokenId].endTime) {
@@ -102,12 +122,28 @@ contract PromotedPool is ERC721Full, ERC721Burnable, Ownable {
     }
   }
 
+  /**
+    * @dev gets the hash for the terms and conditions for a given terms version
+    * @return string terms hash
+    */
   function getTermsHash(uint8 _termsVersion) public view returns(string memory) {
     return terms[_termsVersion];
   }
 
+  /**
+    * @dev gets the version of the terms and conditions for a given token ID
+    * @return uint8 terms version
+    */
   function getTermsVersion(uint256 _tokenId) public view returns(uint8) {
     return termsVersions[_tokenId];
+  }
+
+  /**
+    * @dev gets the current token ID from _currentTokenId 
+    * @return uint256 for the current token ID
+    */
+  function getCurrentTokenId() public view returns (uint256) {
+    return _currentToken
   }
 
   /**
@@ -125,10 +161,17 @@ contract PromotedPool is ERC721Full, ERC721Burnable, Ownable {
     _currentTokenId++;
   }
 
+  /**
+    * @dev base URI used by tokenURI
+    */
   function baseTokenURI() public view returns (string memory) {
     return "https://nft.blocklytics.org/";
   }
 
+  /**
+    * @dev returns metadata URI for token
+    * @return string metadata URI
+    */
   function tokenURI(uint256 _tokenId) external view returns (string memory) {
     return Strings.strConcat(
         baseTokenURI(),
