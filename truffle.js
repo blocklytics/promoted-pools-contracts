@@ -62,7 +62,8 @@ module.exports = {
 Author: Chris Piatt (@chpiatt)\n
 Email: chris@blocklytics.org\n
 Organization: Blocklytics (@blocklytics)\n
-Version: 1.0
+Version: 1.0\n
+Learn More: https://blocklytics.org/blog/fyi-tokens-nfts-digital-ads
 `
   }
 };

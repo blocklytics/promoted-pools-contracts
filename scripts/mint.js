@@ -61,16 +61,18 @@ const NFT_ABI = [{
 }, {
     "constant": true,
     "inputs": [],
-    "name": "getCurrentTokenId",
-    "outputs": [{
+    "name": "currentTokenId",
+    "outputs": [
+      {
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
-    }],
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
-}, {
+  }, {
     "constant": true,
     "inputs": [{
         "internalType": "uint256",
@@ -132,7 +134,7 @@ async function main() {
         const nftContract = new web3Instance.eth.Contract(NFT_ABI, NFT_CONTRACT_ADDRESS, {
             gasLimit: "1000000"
         })
-        let currentTokenIdResult = await nftContract.methods.getCurrentTokenId().call({
+        let currentTokenIdResult = await nftContract.methods.currentTokenId().call({
             from: OWNER_ADDRESS
         });
         let currentTokenId = parseInt(currentTokenIdResult)

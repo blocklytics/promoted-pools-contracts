@@ -1,7 +1,6 @@
 pragma solidity ^0.5.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721Full.sol";
-import "@openzeppelin/contracts/token/ERC721/ERC721Burnable.sol";
 import "@openzeppelin/contracts/ownership/Ownable.sol";
 import "./Strings.sol";
 
@@ -15,12 +14,12 @@ contract ProxyRegistry {
  * @title Promoted Pool
  * Promoted Pool - ERC721 contract that gives the holder the right to promote a pool on pools.fyi during the specified timeframe.
  */
-contract PromotedPool is ERC721Full, ERC721Burnable, Ownable {
+contract PromotedPool is ERC721Full, Ownable {
   using Strings for string;
 
   address proxyRegistryAddress;
-  uint256 private _currentTokenId;
-  uint256 private _activeTokenId;
+  uint256 public currentTokenId;
+  uint256 public activeTokenId;
   uint8 public currentTermsVersion;
 
   struct PromotionPeriod {
@@ -58,9 +57,9 @@ contract PromotedPool is ERC721Full, ERC721Burnable, Ownable {
     */
   function mintTo(address _to, uint256 _startTime, uint256 _endTime, string memory _termsHash, uint8 _termsVersion) public onlyOwner {
     require(_startTime > now, "Token must have start time in the future.");
-    require(_startTime > promotionPeriods[_currentTokenId].endTime, "Token must have start time > most recent token's end time");
-    if(promotionPeriods[_currentTokenId].endTime != 0) {
-      require(_startTime - promotionPeriods[_currentTokenId].endTime < 7890000 , "Token must have start time < 1 year after the most recent token's end time");
+    require(_startTime > promotionPeriods[currentTokenId].endTime, "Token must have start time > most recent token's end time");
+    if(promotionPeriods[currentTokenId].endTime != 0) {
+      require(_startTime - promotionPeriods[currentTokenId].endTime < 7890000 , "Token must have start time < 1 year after the most recent token's end time");
     }
     uint256 newTokenId = _getNextTokenId();
     _mint(_to, newTokenId);
@@ -108,17 +107,21 @@ contract PromotedPool is ERC721Full, ERC721Burnable, Ownable {
     * @return address pool address
     */
   function getPromotedPool() public view returns (address) {
-    return proposedPools[_activeTokenId].approvedPool;
+    if(now >= promotionPeriods[activeTokenId].startTime) {
+      return proposedPools[activeTokenId].approvedPool;
+    } else {
+      return address(0);
+    }
   }
 
   /**
-    * @dev sets the promoted pool returned by getPromotedPool by incrementing _activeTokenId
+    * @dev sets the promoted pool returned by getPromotedPool by incrementing activeTokenId
     */
   function setPromotedPool() public {
-    require(_currentTokenId > _activeTokenId, "Mint new token first.");
-    if (now >= promotionPeriods[_activeTokenId].endTime) {
-      ++_activeTokenId;
-      emit ActiveTokenUpdated(_activeTokenId);
+    require(currentTokenId > activeTokenId, "Mint new token first.");
+    if (now >= promotionPeriods[activeTokenId].endTime) {
+      ++activeTokenId;
+      emit ActiveTokenUpdated(activeTokenId);
     }
   }
 
@@ -139,26 +142,18 @@ contract PromotedPool is ERC721Full, ERC721Burnable, Ownable {
   }
 
   /**
-    * @dev gets the current token ID from _currentTokenId 
-    * @return uint256 for the current token ID
-    */
-  function getCurrentTokenId() public view returns (uint256) {
-    return _currentTokenId;
-  }
-
-  /**
-    * @dev calculates the next token ID based on value of _currentTokenId 
+    * @dev calculates the next token ID based on value of currentTokenId 
     * @return uint256 for the next token ID
     */
   function _getNextTokenId() private view returns (uint256) {
-    return _currentTokenId.add(1);
+    return currentTokenId.add(1);
   }
 
   /**
-    * @dev increments the value of _currentTokenId 
+    * @dev increments the value of currentTokenId 
     */
   function _incrementTokenId() private  {
-    _currentTokenId++;
+    currentTokenId++;
   }
 
   /**
