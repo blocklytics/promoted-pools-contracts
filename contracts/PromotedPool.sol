@@ -21,6 +21,7 @@ contract PromotedPool is ERC721Full, ERC721Burnable, Ownable {
   address proxyRegistryAddress;
   uint256 private _currentTokenId;
   uint256 private _activeTokenId;
+  uint8 public currentTermsVersion;
 
   struct PromotionPeriod {
     uint256 startTime;
@@ -34,6 +35,8 @@ contract PromotedPool is ERC721Full, ERC721Burnable, Ownable {
 
   mapping (uint256 => PromotionPeriod) promotionPeriods;
   mapping (uint256 => PoolProposal) proposedPools;
+  mapping (uint256 => uint8) termsVersions;
+  mapping (uint8 => string) terms;
 
   event MintedToken(uint256 indexed tokenId, address indexed tokenOwner, uint256 indexed startTime, uint256 endTime);
   event PromotedPoolProposed(address indexed poolAddress, uint256 indexed tokenId, uint256 indexed startTime, uint256 endTime);
@@ -43,15 +46,13 @@ contract PromotedPool is ERC721Full, ERC721Burnable, Ownable {
 
   constructor(string memory _name, string memory _symbol, address _proxyRegistryAddress) ERC721Full(_name, _symbol) public {
     proxyRegistryAddress = _proxyRegistryAddress;
-    // promotionPeriods[_currentTokenId].startTime = 0;
-    // promotionPeriods[_currentTokenId].endTime = 0;
   }
 
   /**
     * @dev Mints a token to an address with a tokenURI.
     * @param _to address of the future owner of the token
     */
-  function mintTo(address _to, uint256 _startTime, uint256 _endTime) public onlyOwner {
+  function mintTo(address _to, uint256 _startTime, uint256 _endTime, string memory _termsHash, uint8 _termsVersion) public onlyOwner {
     require(_startTime > now, "Token must have start time in the future.");
     require(_startTime > promotionPeriods[_currentTokenId].endTime, "Token must have start time > most recent token's end time");
     if(promotionPeriods[_currentTokenId].endTime != 0) {
@@ -62,6 +63,11 @@ contract PromotedPool is ERC721Full, ERC721Burnable, Ownable {
     _incrementTokenId();
     promotionPeriods[newTokenId] = PromotionPeriod(_startTime, _endTime);
     proposedPools[newTokenId] = PoolProposal(address(0), address(0));
+    if(_termsVersion > currentTermsVersion) {
+      terms[_termsVersion] = _termsHash;
+      currentTermsVersion = _termsVersion;
+    }
+    termsVersions[newTokenId] = _termsVersion;
     emit MintedToken(newTokenId, _to, _startTime, _endTime);
   }
 
@@ -84,7 +90,7 @@ contract PromotedPool is ERC721Full, ERC721Burnable, Ownable {
     emit PromotedPoolReset(_tokenId);
   }
 
-  function getPromotedPool() public returns (address) {
+  function getPromotedPool() public view returns (address) {
     return proposedPools[_activeTokenId].approvedPool;
   }
 
@@ -94,6 +100,14 @@ contract PromotedPool is ERC721Full, ERC721Burnable, Ownable {
       ++_activeTokenId;
       emit ActiveTokenUpdated(_activeTokenId);
     }
+  }
+
+  function getTermsHash(uint8 _termsVersion) public view returns(string memory) {
+    return terms[_termsVersion];
+  }
+
+  function getTermsVersion(uint256 _tokenId) public view returns(uint8) {
+    return termsVersions[_tokenId];
   }
 
   /**

@@ -46,12 +46,12 @@ module.exports = {
     },
     compilers: {
       solc: {
-        version: "^0.5.0"
+        version: "0.5.12"
       }
     }, 
   },
   plugins: [
-    'truffle-verify'
+    'truffle-plugin-verify'
   ],
   api_keys: {
     etherscan: ETHERSCAN_API_KEY

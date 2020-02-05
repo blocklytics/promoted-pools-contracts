@@ -1,9 +1,5 @@
 ## Promoted Pools ERC721 contracts
 
-### Node version
-
-Either make sure you're running a version of node compliant with the `engines` requirement in `package.json`, or install Node Version Manager [`nvm`](https://github.com/creationix/nvm) and run `nvm use` to use the correct version of node.
-
 ## Installation
 
 Run
@@ -28,11 +24,21 @@ sudo npm explore npm -g -- npm install node-gyp@latest # Update node-gyp
 
 ```
 export INFURA_KEY="<infura_key>"
-export PRIVATE_KEY="<metmask_PRIVATE_KEY>"
+export PRIVATE_KEY="<metmask_private_key>"
 truffle deploy --network rinkeby
 ```
 
-### Minting tokens.
+### Pinning the contract terms to IPFS
+
+You will need an IPFS hash of the most recent terms and conditions (located in the terms directory) in order to mint your tokens.  Each version is specified by the number that serves as the filename.
+
+An easy way to pin data to IPFS is to use a service like [Pinata](https://pinata.cloud/pinataupload) to upload the file.  Upload the latest version of the terms, copy the hash that's returned, and then run:
+
+```
+export TERMS_HASH="<ipfs_hash>"
+```
+
+### Setting token environment variables.
 
 After deploying to the Rinkeby network, there will be a contract on Rinkeby that will be viewable on [Rinkeby Etherscan](https://rinkeby.etherscan.io). For example, here is a [recently deployed contract](https://rinkeby.etherscan.io/address/0xeba05c5521a3b81e23d15ae9b2d07524bc453561). You should set this contract address and the address of your Metamask account as environment variables when running the minting script:
 

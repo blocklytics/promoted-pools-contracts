@@ -1,7 +1,7 @@
 const PromotedPool = artifacts.require("./PromotedPool.sol");
 
 module.exports = function(deployer, network) {
-  const tokenName = "Promoted Pool"
+  const tokenName = "Pools.fyi Promo"
   const tokenSymbol = "FYI"
   // OpenSea proxy registry addresses for rinkeby and mainnet.
   let proxyRegistryAddress = ""
