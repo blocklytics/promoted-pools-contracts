@@ -17,9 +17,9 @@ sudo npm explore npm -g -- npm install node-gyp@latest # Update node-gyp
 
 ## Deploying
 
-### Deploying to the Rinkeby network.
+### Deploying to the Rinkeby network
 
-1. You'll need to sign up for [Infura](https://infura.io). and get an API key.
+1. You'll need to sign up for [Infura](https://infura.io) and get an API key.
 2. Using your API key and the private key for your Metamask wallet (make sure you're using a Metamask private key that you're comfortable using for testing purposes), run:
 
 ```
@@ -38,7 +38,7 @@ An easy way to pin data to IPFS is to use a service like [Pinata](https://pinata
 export TERMS_HASH="<ipfs_hash>"
 ```
 
-### Setting token environment variables.
+### Setting token environment variables
 
 After deploying to the Rinkeby network, there will be a contract on Rinkeby that will be viewable on [Rinkeby Etherscan](https://rinkeby.etherscan.io). For example, here is a [recently deployed contract](https://rinkeby.etherscan.io/address/0x3D0Cb6CC9ddc16e96B26b4a0613bb46667ff2928). You should set this contract address and the address of your Metamask account as environment variables when running the minting script:
 

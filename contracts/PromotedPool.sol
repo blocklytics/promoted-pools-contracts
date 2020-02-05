@@ -143,7 +143,7 @@ contract PromotedPool is ERC721Full, ERC721Burnable, Ownable {
     * @return uint256 for the current token ID
     */
   function getCurrentTokenId() public view returns (uint256) {
-    return _currentToken
+    return _currentTokenId;
   }
 
   /**
