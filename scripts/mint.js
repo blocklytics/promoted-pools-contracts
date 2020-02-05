@@ -17,7 +17,7 @@ if (!PRIVATE_KEY || !INFURA_KEY || !OWNER_ADDRESS || !NETWORK) {
     return
 }
 
-const BASE_URL = "https://nft.blocklytics.org/promoted-pools/"
+const BASE_URL = "https://nft.blocklytics.org/api/promoted-pools/"
 const STORAGE_BUCKET_URL = "https://storage.googleapis.com/promoted-pools/meta/"
 const TOKEN_VALID_FOR_SECONDS = TOKEN_VALID_FOR_WEEKS * 7 * 24 * 60 * 60;
 

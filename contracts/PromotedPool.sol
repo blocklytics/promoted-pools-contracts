@@ -132,7 +132,7 @@ contract PromotedPool is ERC721Full, ERC721Burnable, Ownable {
   function tokenURI(uint256 _tokenId) external view returns (string memory) {
     return Strings.strConcat(
         baseTokenURI(),
-        "promoted-pools/",
+        "api/promoted-pools/",
         Strings.uint2str(_tokenId)
     );
   }
