@@ -10,7 +10,7 @@ const TERMS_HASH = process.env.TERMS_HASH
 const TERMS_VERSION = 1
 const NUM_PROMOTED_POOLS = 1
 const TOKEN_VALID_FOR_WEEKS = 2;
-const FIRST_TOKEN_START_TIME = "2020-02-25T00:00:00+0000"
+const FIRST_TOKEN_START_TIME = "2020-02-17T10:00:00+0000"
 
 if (!PRIVATE_KEY || !INFURA_KEY || !OWNER_ADDRESS || !NETWORK) {
     console.error("Please set a PRIVATE_KEY, infura key, owner, network, and contract address.")
@@ -144,7 +144,8 @@ async function main() {
             let endTime = startTime + TOKEN_VALID_FOR_SECONDS;
             console.log("Minting new promoted pool...")
             let mintResult = await nftContract.methods.mintTo(OWNER_ADDRESS, startTime, endTime, TERMS_HASH, TERMS_VERSION).send({
-                from: OWNER_ADDRESS
+                from: OWNER_ADDRESS,
+                gasPrice: "6000000000"
             });
             console.log("Minted Promoted Pool NFT. Transaction: " + mintResult.transactionHash)
             currentTokenId++
