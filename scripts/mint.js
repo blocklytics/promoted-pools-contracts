@@ -7,10 +7,10 @@ const NFT_CONTRACT_ADDRESS = process.env.NFT_CONTRACT_ADDRESS
 const OWNER_ADDRESS = process.env.OWNER_ADDRESS
 const NETWORK = process.env.NETWORK
 const TERMS_HASH = process.env.TERMS_HASH
-const TERMS_VERSION = 1
+const TERMS_VERSION = 2
 const NUM_PROMOTED_POOLS = 1
-const TOKEN_VALID_FOR_WEEKS = 2;
-const FIRST_TOKEN_START_TIME = "2020-02-17T10:00:00+0000"
+const TOKEN_VALID_FOR_WEEKS = 2
+const FIRST_TOKEN_START_TIME = "2020-03-02T10:00:01+0000"
 
 if (!PRIVATE_KEY || !INFURA_KEY || !OWNER_ADDRESS || !NETWORK) {
     console.error("Please set a PRIVATE_KEY, infura key, owner, network, and contract address.")
@@ -91,9 +91,11 @@ const NFT_ABI = [{
 }]
 
 async function createTokenMetadata(tokenId, startTime, endTime) {
+    const startDate = new Date(startTime * 1000);
+    const endDate = new Date(endTime * 1000);
     let metadata = {
         "name": "Pools.fyi Promoted Pool",
-        "description": "This token is used to promote a pool on https://pools.fyi.\n\nASK QUESTIONS:\n\nhello@blocklytics.org\n\nREAD MORE:\n\nhttps://blocklytics.org/blog/fyi-tokens-nfts-digital-ads/\n\nVIEW TERMS ON IPFS:\n\n https://ipfs.io/ipfs/" + TERMS_HASH + "\n\nREDEEM THE TOKEN:\n\nhttps://pools.fyi/#/redeem?token=" + tokenId,
+        "description": "Use this token to promote a Uniswap, Bancor or Curve pool on https://pools.fyi between " + startDate.toLocaleString('default', { timeZone: 'UTC', month: 'short' }) + " " + startDate.getUTCDate() + "-" + endDate.toLocaleString('default', { timeZone: 'UTC', month: 'short' }) + " " + endDate.getUTCDate() + ", " + endDate.getUTCFullYear() + ".\n\nRedeem the token at https://pools.fyi/#/redeem?token=" + tokenId + "\n\nDiscord: https://discordapp.com/invite/GFxFN3K\n\nEmail: hello@blocklytics.org\n\nBlog: https://blocklytics.org/blog/fyi-tokens-nfts-digital-ads/\n\nTerms: https://ipfs.io/ipfs/" + TERMS_HASH,
         "external_url": "https://pools.fyi"
     }
     metadata.image = STORAGE_BUCKET_URL + tokenId + "/blocklytics-cool.png"
